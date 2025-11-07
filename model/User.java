@@ -9,7 +9,6 @@ public class User {
     private String userName;
     private String password;
 
-    public static Map<String,String> users=new HashMap<>();
 
 
     public User(String userName, String password) {
