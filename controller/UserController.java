@@ -1,14 +1,18 @@
 package controller;
-import model.*;
+
+import view.Main;
 
 public class UserController {
+    
+    public Integer validateUser(String userName,String userPassWord){
+           for(Integer id:Main.users.keySet()){
+              String name=Main.users.get(id).getUserName();
+              String password=Main.users.get(id).getPassWord();
+              if(name.equals(userName) && password.equals(userPassWord)){
+                return id;
+              }
 
-    public boolean authenticate(String username, String password) {
-        for (User u : StoreData.users) {
-            if (u.getUserName().equals(username) && u.getPassword().equals(password)) {
-                return true;
-            }
-        }
-        return false;
+           }
+           return 0;
     }
 }

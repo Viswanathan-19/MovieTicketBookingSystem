@@ -1,23 +1,115 @@
 package view;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 import controller.MovieController;
-import controller.ShowController;
+import controller.ScreenController;
 import controller.TheatreController;
 import controller.UserController;
-import model.StoreData;
-import model.User;
+
+import model.*;
 
 public class Main {
+
+    public static final Map<Integer,User> users=new HashMap<>();
+    public static final Map<Integer,Movie> movies=new HashMap<>();
+    public static final Map<Integer, Theatre> theatres = new HashMap<>();
+    public static final Map<Integer, Screen> screens = new HashMap<>();
+    public static final Map<Integer, Show> shows = new HashMap<>();
+    
+    static{
+
+        users.put(1,new User(1, "viswa", "123"));
+        users.put(2,new User(2, "sudhir", "456"));
+        users.put(3,new User(3,"peter", "789"));
+
+        Movie movie1=new Movie(1, "Leo");
+        Movie movie2=new Movie(2, "Vikram");
+        Movie movie3=new Movie(3, "F1");
+        Movie movie4=new Movie(4, "Petta");
+        Movie movie5=new Movie(5, "Bison");
+
+        movies.put(movie1.getMovieId(),movie1);
+        movies.put(movie2.getMovieId(),movie2);
+        movies.put(movie3.getMovieId(),movie3);
+        movies.put(movie4.getMovieId(),movie4);
+        movies.put(movie5.getMovieId(),movie5);
+
+        Theatre t1=new Theatre(1, "KG");
+        Theatre t2=new Theatre(2, "Inox");
+        Theatre t3=new Theatre(3, "PVR");
+        Theatre t4=new Theatre(4, "Miraj");
+        Theatre t5=new Theatre(5, "Broadway");
+
+        theatres.put(t1.getTheatreId(), t1);
+        theatres.put(t2.getTheatreId(), t2);
+        theatres.put(t3.getTheatreId(), t3);
+        theatres.put(t4.getTheatreId(), t4);
+        theatres.put(t5.getTheatreId(), t5);
+
+        Screen s1=new Screen(1, 1, 30);
+        Screen s2=new Screen(2, 2, 30);
+        Screen s3=new Screen(3, 3, 30);
+        Screen s4=new Screen(4, 4, 30);
+        Screen s5=new Screen(5, 5, 30);
+
+        screens.put(s1.getScreenId(), s1);
+        screens.put(s2.getScreenId(), s2);
+        screens.put(s3.getScreenId(), s3);
+        screens.put(s4.getScreenId(), s4);
+        screens.put(s5.getScreenId(), s5);
+
+         Show sh1 = new Show(1, 1, 1, 1,
+                LocalDate.now(),
+                LocalTime.of(10, 30),190);
+
+        Show sh2 = new Show(2, 1, 1, 2,
+                LocalDate.now(),
+                LocalTime.of(14, 45),220);
+
+        Show sh3 = new Show(3, 2, 2, 2,
+                LocalDate.now(),
+                LocalTime.of(18, 00),190);
+
+        Show sh4 = new Show(4, 3, 3, 3,
+                LocalDate.now().plusDays(1),
+                LocalTime.of(20, 15),150);
+         
+        Show sh5 = new Show(5, 4, 4, 4,
+                LocalDate.now().plusDays(1),
+                LocalTime.of(21, 00),150);
+         
+        Show sh6 = new Show(6, 5, 4, 5,
+                LocalDate.now(),
+                LocalTime.of(9, 15),150);
+         
+        Show sh7 = new Show(7, 5, 5, 4,
+                LocalDate.now().plusDays(1),
+                LocalTime.of(11, 15),150);
+
+        Show sh8 = new Show(8, 5, 4, 5,
+                LocalDate.now().plusDays(1),
+                LocalTime.of(1, 15),150);
+         
+        shows.put(sh1.getShowId(), sh1);
+        shows.put(sh2.getShowId(), sh2);
+        shows.put(sh3.getShowId(), sh3);
+        shows.put(sh4.getShowId(), sh4);
+        shows.put(sh5.getShowId(), sh5);
+        shows.put(sh6.getShowId(), sh6);
+        shows.put(sh7.getShowId(), sh7);
+        shows.put(sh8.getShowId(), sh8);
+    }
+
     public static void main(String[] args) {
-        Scanner sc=new Scanner(System.in);
-        UserController userController=new UserController();
-        MovieController movieController=new MovieController();
-        TheatreController theatreController=new TheatreController();
-        ShowController showController=new ShowController();
+       Scanner sc=new Scanner(System.in);
+       UserController userController=new UserController();
+       MovieController movieController=new MovieController();
+       TheatreController theatreController=new TheatreController();
+       ScreenController screenController=new ScreenController();
+       
 
         System.out.println("Book Your Tickets Now");
             while(true){    
@@ -29,12 +121,33 @@ public class Main {
             System.out.print("Enter password: ");
             String password=sc.nextLine(); 
 
-            if(userController.authenticate(userName, password)){
+            int id=userController.validateUser(userName, password);
+
+            if(id>0){
                 System.out.println("\nLogin successFul! Welcome "+userName);
-                String movieName=movieController.displayMovies();
-                 String theatreName= theatreController.displayTheatres(movieName);
-                 LocalTime time=showController.displayShows(movieName,theatreName);
-                 
+                System.out.println("\nEnter the date to view movies (yyyy-MM-dd):");
+                LocalDate date=null;
+                while(true){
+                    try{
+                        date=LocalDate.parse(sc.nextLine());
+                        break;
+                    }
+                    catch(Exception e){
+                        System.out.println("Invalid date! Enter again (yyyy-MM-dd):");
+                    }
+                }
+                movieController.displayMoviesByDate(date);
+                System.out.println("Select a Movie to watch: ");
+                String movieName=sc.nextLine();
+                theatreController.displayTheatres(movieName,date);
+                System.out.println("Select a Theatre");
+                String theatreName=sc.nextLine();
+                theatreController.displayTheatresShows(theatreName);
+                
+                
+              
+
+
                 return;
             }
             else{
@@ -45,4 +158,6 @@ public class Main {
     
 
     }
+
+    
 

@@ -1,26 +1,31 @@
 package controller;
 
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.util.*;
 
 import model.*;
-
+import view.Main;
 
 public class MovieController {
+    
+    public void displayMoviesByDate(LocalDate date){
+        Set<Integer> movieIds=new HashSet<>();
+        for(Show s:Main.shows.values()){
+            if(s.getShowDate().equals(date)){
+                movieIds.add(s.getMovieId());
+            }
 
-    Scanner sc=new Scanner(System.in);
-     
-    public String displayMovies(){
-        System.out.println("\nThe List Of Movies Streaming are ->");
-        for(Movie m:StoreData.movies){
-            System.out.println(m.getMovieName());
         }
+                
+        if (movieIds.isEmpty()) {
+                System.out.println("No movies available on " + date);
+                return;
+            }
 
-        System.out.print("Please select a movie to watch -> ");
-
-        String movieName=sc.nextLine();
-
-        return movieName;
-
-
+        System.out.println("\nMovies available on " + date + ":");
+        for(int movieId:movieIds){
+            Movie movie=Main.movies.get(movieId);
+             System.out.println("- " + movie.getmovieName());
+        }
     }
 }

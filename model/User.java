@@ -1,38 +1,27 @@
 package model;
 
-import java.util.*; 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class User {
-    
-    private AtomicInteger userId=new AtomicInteger(0);
+    private  Integer userId;
     private String userName;
-    private String password;
+    private String passWord;
 
-
-
-    public User(String userName, String password) {
+    public User(Integer userId, String userName, String passWord) {
+        this.userId = userId;
         this.userName = userName;
-        this.password = password;
-    }
-    
-
-    public String getUserName() {
-        return userName;
-    }
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
+        this.passWord = passWord;
     }
 
-    
-  
+    public Integer getUserId() {return userId;}
 
+    public void setUserId(int userId) { this.userId = userId;}
 
+    public String getUserName() {   return userName; }
+
+    public void setUserName(String userName) {   this.userName = userName; }
+
+    public String getPassWord() { return passWord;}
+
+    public void setPassWord(String passWord) {  this.passWord = passWord; }
+   
 
 }

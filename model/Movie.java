@@ -1,53 +1,15 @@
 package model;
 
+
 public class Movie {
-    
-    private String movieName;
     private int movieId;
-    private int durationInMin;
+    private String movieName;
 
-    
-
-    public Movie(String movieName, int durationInMin,int movieId) {
-        this.movieName = movieName;
-        this.movieId=movieId;
-        this.durationInMin = durationInMin;
-    }
-
-
-    public String getMovieName() {
-        return movieName;
-    }
-
-
-    public void setMovieName(String movieName) {
-        this.movieName = movieName;
-    }
-
-
-    
-
-    public int getDuration() {
-        return durationInMin;
-    }
-
-
-    public void setDuration(int durationInMin) {
-        this.durationInMin = durationInMin;
-    }
-
-
-    public int getMovieId() {
-        return movieId;
-    }
-
-
-    public void setMovieId(int movieId) {
+    public Movie(int  movieId, String movieName) {
         this.movieId = movieId;
+        this.movieName = movieName;
     }
 
-    
-
-    
-    
+    public int getMovieId() { return movieId; }
+    public String getmovieName() { return movieName; }
 }
