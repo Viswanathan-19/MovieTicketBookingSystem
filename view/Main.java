@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.*;
 
 import controller.MovieController;
-import controller.ScreenController;
+import controller.ShowController;
 import controller.TheatreController;
 import controller.UserController;
 
@@ -54,18 +54,20 @@ public class Main {
         Screen s3=new Screen(3, 3, 30);
         Screen s4=new Screen(4, 4, 30);
         Screen s5=new Screen(5, 5, 30);
+        Screen s6=new Screen(6, 5, 30);
 
         screens.put(s1.getScreenId(), s1);
         screens.put(s2.getScreenId(), s2);
         screens.put(s3.getScreenId(), s3);
         screens.put(s4.getScreenId(), s4);
         screens.put(s5.getScreenId(), s5);
+        screens.put(s6.getScreenId(), s6);
 
          Show sh1 = new Show(1, 1, 1, 1,
                 LocalDate.now(),
                 LocalTime.of(10, 30),190);
 
-        Show sh2 = new Show(2, 1, 1, 2,
+        Show sh2 = new Show(2, 1, 1, 1,
                 LocalDate.now(),
                 LocalTime.of(14, 45),220);
 
@@ -79,19 +81,23 @@ public class Main {
          
         Show sh5 = new Show(5, 4, 4, 4,
                 LocalDate.now().plusDays(1),
-                LocalTime.of(21, 00),150);
+                LocalTime.of(13, 15),150);
          
-        Show sh6 = new Show(6, 5, 4, 5,
+        Show sh6 = new Show(6, 4, 4, 4,
                 LocalDate.now(),
                 LocalTime.of(9, 15),150);
          
-        Show sh7 = new Show(7, 5, 5, 4,
+        Show sh7 = new Show(7, 5, 5, 5,
                 LocalDate.now().plusDays(1),
                 LocalTime.of(11, 15),150);
 
-        Show sh8 = new Show(8, 5, 4, 5,
+        Show sh8 = new Show(8, 5, 5, 5,
                 LocalDate.now().plusDays(1),
-                LocalTime.of(1, 15),150);
+                LocalTime.of(9, 15),150);
+
+        Show sh9 = new Show(9, 3, 5, 3,
+                LocalDate.now().plusDays(1),
+                LocalTime.of(9, 15),150);
          
         shows.put(sh1.getShowId(), sh1);
         shows.put(sh2.getShowId(), sh2);
@@ -101,6 +107,7 @@ public class Main {
         shows.put(sh6.getShowId(), sh6);
         shows.put(sh7.getShowId(), sh7);
         shows.put(sh8.getShowId(), sh8);
+        shows.put(sh9.getShowId(), sh9);
     }
 
     public static void main(String[] args) {
@@ -108,7 +115,11 @@ public class Main {
        UserController userController=new UserController();
        MovieController movieController=new MovieController();
        TheatreController theatreController=new TheatreController();
-       ScreenController screenController=new ScreenController();
+   
+       ShowController showController=new ShowController();
+       String movieName;
+       String theatreName;
+       int movieId;
        
 
         System.out.println("Book Your Tickets Now");
@@ -125,35 +136,89 @@ public class Main {
 
             if(id>0){
                 System.out.println("\nLogin successFul! Welcome "+userName);
-                System.out.println("\nEnter the date to view movies (yyyy-MM-dd):");
-                LocalDate date=null;
-                while(true){
+               
+                 LocalDate date=null;
+                boolean flag=false;
+                do{
                     try{
+                         System.out.println("\nEnter the date to view movies (yyyy-MM-dd):");
                         date=LocalDate.parse(sc.nextLine());
-                        break;
+                       flag= movieController.displayMoviesByDate(date);
+                    
                     }
                     catch(Exception e){
                         System.out.println("Invalid date! Enter again (yyyy-MM-dd):");
                     }
-                }
-                movieController.displayMoviesByDate(date);
+                }while(!flag);
+               
+                
+                do{
                 System.out.println("Select a Movie to watch: ");
-                String movieName=sc.nextLine();
-                theatreController.displayTheatres(movieName,date);
-                System.out.println("Select a Theatre");
-                String theatreName=sc.nextLine();
+                 movieName=sc.nextLine();
+                }while ((theatreController.getMovieId(movieName)) == 0);
+                 theatreController.displayTheatres(movieName,date);
+                 do{
+                System.out.print("\nSelect a Theatre: ");
+                 theatreName=sc.nextLine();
                 theatreController.displayTheatresShows(theatreName);
-                
-                
-              
+                 }while (theatreController.getTheatreId(theatreName)==0);
 
+                 LocalTime showTime=null;
+                movieId=theatreController.returnMovieId();
+                 Thread t1=new Thread(()->{
+                  Show show1 = showController.displaySeatsByShowTime( LocalTime.parse("14:45"), movieId,theatreController.getTheatreId("KG"),LocalDate.parse("2025-11-19"));
+                    showController.bookSeats(new String[]{"A1", "A3"}, show1, 1);
+                  
+        }, "User-1");
+       
+                 Thread t2=new Thread(()->{
+                  Show show2 = showController.displaySeatsByShowTime(LocalTime.parse("14:45"), movieId, theatreController.getTheatreId("KG"), LocalDate.parse("2025-11-19"));
+                    showController.bookSeats(new String[]{"A1", "A3"}, show2, 2);
+                    
+                    
+        }, "User-2");
 
+        t1.start();
+        t2.start();
+                
+        //    showTime=showController.getShowTime();
+            //     movieId=theatreController.returnMovieId();
+            // //    System.out.println("Movie Id: "+movieId+" TheatreId: "+theatreController.getTheatreId(theatreName)+" "+showTime+" "+date);
+            //   Show currentShow= showController.displaySeatsByShowTime(showTime, movieId,theatreController.getTheatreId(theatreName),date);
+            //     System.out.println("Enter seats (space or comma separated): ");
+            //     String seatInput = sc.nextLine();
+                
+            //     String[] seatNumbers=seatInput.split("[, ]+");
+            //     showController.bookSeats(seatNumbers,currentShow,id);
+                try {
+                    t1.join();
+                } catch (InterruptedException e) {
+                    
+                    e.printStackTrace();
+                }
+                try {
+                    t2.join();
+                } catch (InterruptedException e) {
+                    
+                    e.printStackTrace();
+                }
+                for(Booking b:Booking.bookings.values()){
+                    
+                     int bookingId=b.getBookingId();
+                     User u=Main.users.get(b.getUserId());
+                     Show s=b.getShow();
+                     Movie m=Main.movies.get(s.getMovieId());
+                     Theatre t=Main.theatres.get(s.getTheatreId());
+                     System.out.println("UserName: "+u.getUserName()+" BookingId: "+bookingId+" MovieName: "+m.getmovieName()+" TheatreName: "+t.getTheatreName()+" ShowTime: "+s.getShowTime()+" ShowDate: "+s.getShowDate()+" BookedSeats: "+b.getSeatNo());
+                     
+                }
                 return;
             }
             else{
                 System.out.println("Invalid username or password");
             }
             }
+        
         }
     
 

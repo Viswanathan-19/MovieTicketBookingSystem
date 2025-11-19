@@ -8,7 +8,7 @@ import view.Main;
 
 public class MovieController {
     
-    public void displayMoviesByDate(LocalDate date){
+    public boolean displayMoviesByDate(LocalDate date){
         Set<Integer> movieIds=new HashSet<>();
         for(Show s:Main.shows.values()){
             if(s.getShowDate().equals(date)){
@@ -19,7 +19,8 @@ public class MovieController {
                 
         if (movieIds.isEmpty()) {
                 System.out.println("No movies available on " + date);
-                return;
+                System.out.println("Bookings are available from "+LocalDate.now()+" To "+LocalDate.now().plusDays(1));
+                return false;
             }
 
         System.out.println("\nMovies available on " + date + ":");
@@ -27,5 +28,6 @@ public class MovieController {
             Movie movie=Main.movies.get(movieId);
              System.out.println("- " + movie.getmovieName());
         }
+        return true;
     }
 }

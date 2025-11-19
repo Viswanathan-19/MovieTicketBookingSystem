@@ -17,7 +17,7 @@ public class TheatreController {
     public Integer getMovieId(String movieName){
         Integer num=0;
         for(Movie movie:Main.movies.values()){
-            if(movie.getmovieName().equals(movieName)){
+            if(movie.getmovieName().equalsIgnoreCase(movieName)){
                 num=movie.getMovieId();
                 break;
         }
@@ -27,7 +27,7 @@ public class TheatreController {
 
    public int getTheatreId(String theatreName){
     for(Theatre t:Main.theatres.values()){
-        if(t.getTheatreName().equals(theatreName)){
+        if(t.getTheatreName().equalsIgnoreCase(theatreName)){
             return t.getTheatreId();
         }
     }
@@ -35,6 +35,7 @@ public class TheatreController {
    }
    //To display the theatreNames
     public void displayTheatres(String movieName,LocalDate date){
+        
           showDate =date;
            Set<Integer> theatreIds=new HashSet<>();
              movieId=getMovieId(movieName);
@@ -47,7 +48,7 @@ public class TheatreController {
       System.out.println("The Movie is available in the theatres");
        for(Integer id:theatreIds){
           Theatre t=Main.theatres.get(id);
-          System.out.println(t.getTheatreName());
+          System.out.print(t.getTheatreName()+" | ");
        }
 
 
@@ -56,29 +57,17 @@ public class TheatreController {
     public void displayTheatresShows(String theatreName){
         theatreId=getTheatreId(theatreName);
        for(Show s:Main.shows.values()){
-        if(theatreId == s.getTheatreId() && s.getShowDate().equals(showDate)){
+        if(theatreId == s.getTheatreId() && s.getShowDate().equals(showDate) && s.getMovieId() == movieId){
             Theatre t=Main.theatres.get(s.getTheatreId());
             System.out.println("TheatreName: "+t.getTheatreName()+" ScreenNo: "+s.getScreenId()+" ShowTime: "+s.getShowTime()+" ShowDate: "+s.getShowDate() +" TicketPrice: "+s.getTicketPrice());
         }
        }
-         LocalTime showTime=null;
-         while(true){
-         try{
-              System.out.print("Enter show time (HH:mm): ");
-                    String timeInput = sc.nextLine();
-
-                    showTime=LocalTime.parse(timeInput);
-                    break;
-                }
-                catch(Exception e){
-                    System.out.println("Invalid time format! Please enter again in HH:mm format.");
-                }
-            }
-               
-        ScreenController screenController=new ScreenController();
-        screenController.displaySeatsByShowTime(showTime, movieId, theatreId, showDate);
-      
     }
+       public int returnMovieId(){
+        return movieId;
+       }
+      
+    
        
        
         
