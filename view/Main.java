@@ -139,36 +139,36 @@ public class Main {
             if(id>0){
                 System.out.println("\nLogin successFul! Welcome "+userName);
                
-                 LocalDate date=null;
-                boolean flag=false;
-                do{
-                    try{
-                         System.out.println("\nEnter the date to view movies (yyyy-MM-dd):");
-                        date=LocalDate.parse(sc.nextLine());
-                       flag= movieController.displayMoviesByDate(date);
+                //  LocalDate date=null;
+                // boolean flag=false;
+                // do{
+                //     try{
+                //          System.out.println("\nEnter the date to view movies (yyyy-MM-dd):");
+                //         date=LocalDate.parse(sc.nextLine());
+                //        flag= movieController.displayMoviesByDate(date);
                     
-                    }
-                    catch(Exception e){
-                        System.out.println("Invalid date! Enter again (yyyy-MM-dd):");
-                    }
-                }while(!flag);
+                //     }
+                //     catch(Exception e){
+                //         System.out.println("Invalid date! Enter again (yyyy-MM-dd):");
+                //     }
+                // }while(!flag);
                
                 
-                do{
-                System.out.println("Select a Movie to watch: ");
-                 movieName=sc.nextLine();
-                }while ((theatreController.getMovieId(movieName)) == 0);
-                 theatreController.displayTheatres(movieName,date);
-                 do{
-                System.out.print("\nSelect a Theatre: ");
-                 theatreName=sc.nextLine();
-                theatreController.displayTheatresShows(theatreName);
-                 }while (theatreController.getTheatreId(theatreName)==0);
+                // do{
+                // System.out.println("Select a Movie to watch: ");
+                //  movieName=sc.nextLine();
+                // }while ((theatreController.getMovieId(movieName)) == 0);
+                //  theatreController.displayTheatres(movieName,date);
+                //  do{
+                // System.out.print("\nSelect a Theatre: ");
+                //  theatreName=sc.nextLine();
+                // theatreController.displayTheatresShows(theatreName);
+                //  }while (theatreController.getTheatreId(theatreName)==0);
 
-                 LocalTime showTime=null;
-                movieId=theatreController.returnMovieId();
+                //  LocalTime showTime=null;
+                // movieId=theatreController.returnMovieId();
                  Thread t1=new Thread(()->{
-                  int status = showController.displaySeatsByShowTime( LocalTime.parse("14:45"), movieId,theatreController.getTheatreId("KG"),LocalDate.now(),1);
+                  int status = showController.displaySeatsByShowTime( LocalTime.parse("14:45"), 1,theatreController.getTheatreId("KG"),LocalDate.now(),1);
                     // showController.bookSeats(new String[]{"A1", "A3"}, show1, 1);
 
                     
@@ -176,7 +176,7 @@ public class Main {
         }, "User-1");
        
                  Thread t2=new Thread(()->{
-                  int status = showController.displaySeatsByShowTime(LocalTime.parse("14:45"), movieId, theatreController.getTheatreId("KG"), LocalDate.now(),2);
+                  int status = showController.displaySeatsByShowTime(LocalTime.parse("14:45"), 1, theatreController.getTheatreId("KG"), LocalDate.now(),2);
                     // showController.bookSeats(new String[]{"A1", "A5"}, show2, 2);
 
                   

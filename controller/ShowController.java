@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 
 import view.Main;
 import model.*;
@@ -94,6 +93,9 @@ public class ShowController {
             locked.add(seat);
             System.out.println(Thread.currentThread().getName()+" "+seat + " locked!");
         } else {
+               for(String seat1:seatNumbers){   //if one of the seats is not locked ,unlock all the seats for rebooking
+                   show.unlockSeat(seat1);
+               }
             System.out.println(Thread.currentThread().getName()+" "+seat + " cannot be locked! or already booked! Try again\n");
             return 0 ;
         }
@@ -135,7 +137,7 @@ public class ShowController {
 
    // confirm with the user
   public boolean confirm(List<String> locked,Show show){
-    Scanner sc = new Scanner(System.in);
+    Scanner sc = ScannerProvider.getScanner();
     System.out.print("\nConfirm booking? yes/no: ");
     String answer = sc.nextLine();
 
