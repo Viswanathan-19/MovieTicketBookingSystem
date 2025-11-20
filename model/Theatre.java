@@ -1,8 +1,8 @@
 package model;
 
 public class Theatre {
-    private int theatreId;
-    private String theatreName;
+    private final int theatreId;
+    private final String theatreName;
 
     public Theatre(int theatreId, String theatreName) {
         this.theatreId = theatreId;

@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 public class Show {
 
@@ -21,7 +23,7 @@ public class Show {
     private List<String> allSeats = new ArrayList<>();
     private Set<String> bookedSeats = new HashSet<>();
 
-    private Map<String,Long> lockedSeats=new HashMap<>();
+    private ConcurrentHashMap<String,Long> lockedSeats=new ConcurrentHashMap<>();
     private final long LOCK_DURATION_MS=5000;
 
     public Show(int showId, int movieId, int theatreId, int screenId, LocalDate showDate, LocalTime showTime,
@@ -93,7 +95,8 @@ public class Show {
 
    
 
-    public synchronized void displayAllSeats() {
+    public  void displayAllSeats() {
+        
         int count = 1;
         for (String seat : allSeats) {
             if (bookedSeats.contains(seat))
@@ -106,6 +109,8 @@ public class Show {
         }
         System.out.println();
     }
+   
+    
 
     public synchronized boolean finalizeBooking(String seat) {
     if (!lockedSeats.containsKey(seat)) return false;  //check already locked

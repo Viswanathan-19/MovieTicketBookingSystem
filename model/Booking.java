@@ -1,6 +1,7 @@
 package model;
 
-import java.util.HashMap;
+
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.*;
 
 public class Booking {
@@ -10,7 +11,7 @@ public class Booking {
 
     private List<String>seatNo;
 
-    public static Map<Integer,Booking>bookings=new HashMap<>();
+    public static ConcurrentHashMap<Integer,Booking>bookings=new ConcurrentHashMap<>();
 
     public Booking(int bookingId, Show show,int userId,List<String> seatNo) {
         this.bookingId = bookingId;

@@ -3,6 +3,7 @@ package view;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import controller.MovieController;
 import controller.ShowController;
@@ -10,14 +11,15 @@ import controller.TheatreController;
 import controller.UserController;
 
 import model.*;
+import util.ScannerProvider;
 
 public class Main {
 
-    public static final Map<Integer,User> users=new HashMap<>();
-    public static final Map<Integer,Movie> movies=new HashMap<>();
-    public static final Map<Integer, Theatre> theatres = new HashMap<>();
-    public static final Map<Integer, Screen> screens = new HashMap<>();
-    public static final Map<Integer, Show> shows = new HashMap<>();
+    public static final ConcurrentHashMap<Integer,User> users=new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Integer,Movie> movies=new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Integer, Theatre> theatres = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Integer, Screen> screens = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Integer, Show> shows = new ConcurrentHashMap<>();
     
     static{
 
@@ -81,11 +83,11 @@ public class Main {
          
         Show sh5 = new Show(5, 4, 4, 4,
                 LocalDate.now().plusDays(1),
-                LocalTime.of(13, 15),150);
+                LocalTime.of(9, 15),150);
          
         Show sh6 = new Show(6, 4, 4, 4,
                 LocalDate.now(),
-                LocalTime.of(9, 15),150);
+                LocalTime.of(13, 15),150);
          
         Show sh7 = new Show(7, 5, 5, 5,
                 LocalDate.now().plusDays(1),
@@ -111,7 +113,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-       Scanner sc=new Scanner(System.in);
+       Scanner sc=ScannerProvider.getScanner();
        UserController userController=new UserController();
        MovieController movieController=new MovieController();
        TheatreController theatreController=new TheatreController();
@@ -166,30 +168,42 @@ public class Main {
                  LocalTime showTime=null;
                 movieId=theatreController.returnMovieId();
                  Thread t1=new Thread(()->{
-                  Show show1 = showController.displaySeatsByShowTime( LocalTime.parse("14:45"), movieId,theatreController.getTheatreId("KG"),LocalDate.parse("2025-11-19"));
-                    showController.bookSeats(new String[]{"A1", "A3"}, show1, 1);
+                  int status = showController.displaySeatsByShowTime( LocalTime.parse("14:45"), movieId,theatreController.getTheatreId("KG"),LocalDate.now(),1);
+                    // showController.bookSeats(new String[]{"A1", "A3"}, show1, 1);
+
+                    
                   
         }, "User-1");
        
                  Thread t2=new Thread(()->{
-                  Show show2 = showController.displaySeatsByShowTime(LocalTime.parse("14:45"), movieId, theatreController.getTheatreId("KG"), LocalDate.parse("2025-11-19"));
-                    showController.bookSeats(new String[]{"A1", "A3"}, show2, 2);
+                  int status = showController.displaySeatsByShowTime(LocalTime.parse("14:45"), movieId, theatreController.getTheatreId("KG"), LocalDate.now(),2);
+                    // showController.bookSeats(new String[]{"A1", "A5"}, show2, 2);
+
+                  
                     
                     
         }, "User-2");
 
+                 Thread t3=new Thread(()->{
+                  int status = showController.displaySeatsByShowTime(LocalTime.parse("20:15"), 3, theatreController.getTheatreId("PVR"), LocalDate.now().plusDays(1),3);
+                    // showController.bookSeats(new String[]{"A3", "A4"}, show3, 3);
+                    
+                    
+        }, "User-3");
+
         t1.start();
         t2.start();
+        t3.start();
                 
         //    showTime=showController.getShowTime();
-            //     movieId=theatreController.returnMovieId();
-            // //    System.out.println("Movie Id: "+movieId+" TheatreId: "+theatreController.getTheatreId(theatreName)+" "+showTime+" "+date);
-            //   Show currentShow= showController.displaySeatsByShowTime(showTime, movieId,theatreController.getTheatreId(theatreName),date);
-            //     System.out.println("Enter seats (space or comma separated): ");
-            //     String seatInput = sc.nextLine();
+        //         movieId=theatreController.returnMovieId();
+        //     //    System.out.println("Movie Id: "+movieId+" TheatreId: "+theatreController.getTheatreId(theatreName)+" "+showTime+" "+date);
+        //       Show currentShow= showController.displaySeatsByShowTime(showTime, movieId,theatreController.getTheatreId(theatreName),date,id);
+                // /*System.out.println("Enter seats (space or comma separated): ");
+                // String seatInput = sc.nextLine();
                 
-            //     String[] seatNumbers=seatInput.split("[, ]+");
-            //     showController.bookSeats(seatNumbers,currentShow,id);
+                // String[] seatNumbers=seatInput.split("[, ]+");
+                // showController.bookSeats(seatNumbers,currentShow,id);*/
                 try {
                     t1.join();
                 } catch (InterruptedException e) {
@@ -198,6 +212,12 @@ public class Main {
                 }
                 try {
                     t2.join();
+                } catch (InterruptedException e) {
+                    
+                    e.printStackTrace();
+                }
+                try {
+                    t3.join();
                 } catch (InterruptedException e) {
                     
                     e.printStackTrace();
@@ -212,12 +232,14 @@ public class Main {
                      System.out.println("UserName: "+u.getUserName()+" BookingId: "+bookingId+" MovieName: "+m.getmovieName()+" TheatreName: "+t.getTheatreName()+" ShowTime: "+s.getShowTime()+" ShowDate: "+s.getShowDate()+" BookedSeats: "+b.getSeatNo());
                      
                 }
+                sc.close();
                 return;
             }
             else{
                 System.out.println("Invalid username or password");
             }
             }
+           
         
         }
     

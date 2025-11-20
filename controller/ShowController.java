@@ -6,33 +6,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import view.Main;
 import model.*;
+import util.ScannerProvider;
 
 
 
 public class ShowController {
     Show show;
     private static final AtomicInteger bookingIdGenerator = new AtomicInteger(0);
-     Scanner sc=new Scanner(System.in);
+    
 
-    public LocalTime getShowTime(){
-        LocalTime showTime;
-         while(true){
-               try{
-              System.out.print("Enter show time (HH:mm): ");
-                    String timeInput = sc.nextLine();
+//     public LocalTime getShowTime(){
+//         LocalTime showTime;
+//          while(true){
+//                try{
+//               System.out.print("Enter show time (HH:mm): ");
+//                     String timeInput = sc.nextLine();
 
-                    showTime=LocalTime.parse(timeInput);
-                    break;
-                }
-                catch(Exception e){
-                    System.out.println("Invalid time format! Please enter again in HH:mm format.");
-                }
-    }
-    return showTime;
-}
+//                     showTime=LocalTime.parse(timeInput);
+//                     break;
+//                 }
+//                 catch(Exception e){
+//                     System.out.println("Invalid time format! Please enter again in HH:mm format.");
+//                 }
+//     }
+//     return showTime;
+// }
      
     public int getShowId(LocalTime time,int movieId,int theatreId,LocalDate showDate){
         for(Show s:Main.shows.values()){
@@ -48,19 +50,32 @@ public class ShowController {
        
     }
 
-    public  Show displaySeatsByShowTime(LocalTime showTime,int movieId,int theatreId,LocalDate showDate){
+    public  int displaySeatsByShowTime(LocalTime showTime,int movieId,int theatreId,LocalDate showDate,int userId){
               
                       
-              int showId=getShowId(showTime, movieId, theatreId, showDate);  //get showId
+        //   System.out.println(Thread.currentThread().getName()+" enters");
+             
+                synchronized(this){              
+                    Scanner sc=ScannerProvider.getScanner();
+                     int showId=getShowId(showTime, movieId, theatreId, showDate);  //get showId
               show=Main.shows.get(showId);
             //   System.out.println("showid "+showId+" "+show.getShowId()+" "+show.getTheatreId());
               Show currentShow = show;
-                synchronized(currentShow){
                  
-                    System.out.println(Thread.currentThread().getName() + " Available Seats are:");
+                    System.out.println(Thread.currentThread().getName() + " Available Seats for "+Main.movies.get(movieId).getmovieName()+" :");
                     show.displayAllSeats();
-            
-                    return currentShow;
+                    
+                    System.out.println("Enter seats (space or comma separated): ");
+                String seatInput = sc.nextLine();
+                
+                String[] seatNumbers=seatInput.split("[, ]+");
+                int status=bookSeats(seatNumbers,currentShow,userId);
+                   
+                while (status == 0) {
+                         System.out.println("Please Select Different Seats -> \n");
+                          status = displaySeatsByShowTime( showTime, movieId,theatreId,showDate,userId);
+                    }
+                    return status;
                         }
         }
            
@@ -69,9 +84,8 @@ public class ShowController {
 
     
 
-   public void bookSeats(String[] seatNumbers, Show show,int userId) {
+   public int bookSeats(String[] seatNumbers, Show show,int userId) {
    
-   synchronized(show){
     List<String> locked = new ArrayList<>();
 
     // lock each seat
@@ -80,15 +94,15 @@ public class ShowController {
             locked.add(seat);
             System.out.println(Thread.currentThread().getName()+" "+seat + " locked!");
         } else {
-            System.out.println(Thread.currentThread().getName()+" "+seat + " cannot be locked! or already booked! Try again");
-            return ;
+            System.out.println(Thread.currentThread().getName()+" "+seat + " cannot be locked! or already booked! Try again\n");
+            return 0 ;
         }
     }
 
-    if (locked.isEmpty()) return ;
+    if (locked.isEmpty()) return 0;
 
      boolean flag= confirm(locked, show);
-     if(!flag)return;
+     if(!flag)return 1;
       
 
     // Finalize booking
@@ -99,10 +113,11 @@ public class ShowController {
             for (String seat1: locked) {
             show.unlockSeat(seat1);
         }
-             return ;
+             return 1;
             }
         if (show.finalizeBooking(seat) ) {
             // show.isAvailableSeats(seat);
+             
             System.out.println(seat + " BOOKED!");
         } else {
             System.out.println(seat + " lock expired!");
@@ -111,12 +126,12 @@ public class ShowController {
     }
            System.out.println("Seats after booking: ");
            show.displayAllSeats();
-     
             Booking b=new Booking(bookingIdGenerator.incrementAndGet(), show,userId,locked); //store booking information only once
-            Booking.bookings.put(b.getBookingId(),b);
-            return; 
+            Booking.bookings.putIfAbsent(b.getBookingId(),b);
+           
+            return 1; 
 }
-}
+
 
    // confirm with the user
   public boolean confirm(List<String> locked,Show show){
@@ -129,6 +144,8 @@ public class ShowController {
         for (String seat : locked) {
             show.unlockSeat(seat);
         }
+        // System.out.println("\n Available seats are: ");
+        // show.displayAllSeats();
         return false;
     }
     return true;
