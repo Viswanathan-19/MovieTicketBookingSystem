@@ -2,7 +2,7 @@ package util;
 
 import java.util.Scanner;
 
-public class ScannerProvider {
+public class ScannerProvider {         //Singleton Class for one scanner object
     
       private static final Scanner sc=new Scanner(System.in);
       

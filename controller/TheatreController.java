@@ -8,11 +8,10 @@ import java.util.*;
 import model.*;
 
 public class TheatreController {
-    Integer movieId;
+    int movieId;
     int theatreId;
     LocalDate showDate;
-    
-    Scanner sc=new Scanner(System.in);
+ 
     public Integer getMovieId(String movieName){
         Integer num=0;
         for(Movie movie:Main.movies.values()){
@@ -32,9 +31,9 @@ public class TheatreController {
     }
     return 0;
    }
+
    //To display the theatreNames
     public void displayTheatres(String movieName,LocalDate date){
-        
           showDate =date;
            Set<Integer> theatreIds=new HashSet<>();
              movieId=getMovieId(movieName);
@@ -50,7 +49,6 @@ public class TheatreController {
           System.out.print(t.getTheatreName()+" | ");
        }
 
-
 }
     //to display shows in the theatres
     public void displayTheatresShows(String theatreName){
@@ -58,7 +56,7 @@ public class TheatreController {
        for(Show s:Main.shows.values()){
         if(theatreId == s.getTheatreId() && s.getShowDate().equals(showDate) && s.getMovieId() == movieId){
             Theatre t=Main.theatres.get(s.getTheatreId());
-            System.out.println("TheatreName: "+t.getTheatreName()+" ScreenNo: "+s.getScreenId()+" ShowTime: "+s.getShowTime()+" ShowDate: "+s.getShowDate() +" TicketPrice: "+s.getTicketPrice());
+            System.out.println("TheatreName: "+t.getTheatreName()+" ScreenNo: "+s.getScreenId()+" ShowTime: "+s.getShowTime()+" ShowDate: "+s.getShowDate() );
         }
        }
     }
@@ -66,6 +64,22 @@ public class TheatreController {
         return movieId;
        }
       
+       public void displayTheatresAlternateShows(Show show){    //display the alternate shows ,if one of the shows is full
+        
+        for(Show s:Main.shows.values()){
+            if(s.getMovieId() == show.getMovieId() 
+            && s.getTheatreId() == show.getTheatreId()
+            && s.getShowTime()!=show.getShowTime()
+            &&s.getShowDate() == s.getShowDate()){
+                Theatre t=Main.theatres.get(s.getTheatreId());
+                 System.out.println("TheatreName: "+t.getTheatreName()+" ScreenNo: "+s.getScreenId()+" ShowTime: "+s.getShowTime()+" ShowDate: "+s.getShowDate() );
+                 
+                 
+            }
+            
+        }
+        return;
+       }
     
        
        

@@ -51,12 +51,14 @@ public class Main {
         theatres.put(t4.getTheatreId(), t4);
         theatres.put(t5.getTheatreId(), t5);
 
-        Screen s1=new Screen(1, 1, 30);
+        Screen s1=new Screen(1, 1, 30);      //UNIQUE SCREEN ID BCOZ OF KEY OVERWRITING IN HASHMAP
         Screen s2=new Screen(2, 2, 30);
         Screen s3=new Screen(3, 3, 30);
         Screen s4=new Screen(4, 4, 30);
         Screen s5=new Screen(5, 5, 30);
         Screen s6=new Screen(6, 5, 30);
+        Screen s7=new Screen(7, 1, 30);
+        Screen s8=new Screen(8, 1, 30);
 
         screens.put(s1.getScreenId(), s1);
         screens.put(s2.getScreenId(), s2);
@@ -64,42 +66,48 @@ public class Main {
         screens.put(s4.getScreenId(), s4);
         screens.put(s5.getScreenId(), s5);
         screens.put(s6.getScreenId(), s6);
+        screens.put(s7.getScreenId(), s7);
+        screens.put(s8.getScreenId(), s8);
 
          Show sh1 = new Show(1, 1, 1, 1,
                 LocalDate.now(),
-                LocalTime.of(10, 30),190);
+                LocalTime.of(10, 30));
 
-        Show sh2 = new Show(2, 1, 1, 1,
+        Show sh2 = new Show(2, 1, 1, 7,
                 LocalDate.now(),
-                LocalTime.of(14, 45),220);
+                LocalTime.of(14, 45));
 
         Show sh3 = new Show(3, 2, 2, 2,
                 LocalDate.now(),
-                LocalTime.of(18, 00),190);
+                LocalTime.of(18, 00));
 
         Show sh4 = new Show(4, 3, 3, 3,
                 LocalDate.now().plusDays(1),
-                LocalTime.of(20, 15),150);
+                LocalTime.of(20, 15));
          
         Show sh5 = new Show(5, 4, 4, 4,
                 LocalDate.now().plusDays(1),
-                LocalTime.of(9, 15),150);
+                LocalTime.of(9, 15));
          
         Show sh6 = new Show(6, 4, 4, 4,
                 LocalDate.now(),
-                LocalTime.of(13, 15),150);
+                LocalTime.of(13, 15));
          
         Show sh7 = new Show(7, 5, 5, 5,
                 LocalDate.now().plusDays(1),
-                LocalTime.of(11, 15),150);
+                LocalTime.of(11, 15));
 
         Show sh8 = new Show(8, 5, 5, 5,
                 LocalDate.now().plusDays(1),
-                LocalTime.of(9, 15),150);
+                LocalTime.of(9, 15));
 
         Show sh9 = new Show(9, 3, 5, 3,
                 LocalDate.now().plusDays(1),
-                LocalTime.of(9, 15),150);
+                LocalTime.of(9, 15));
+
+        Show sh10 = new Show(10, 1, 1, 8,
+                LocalDate.now(),
+                LocalTime.of(19, 30));
          
         shows.put(sh1.getShowId(), sh1);
         shows.put(sh2.getShowId(), sh2);
@@ -110,6 +118,7 @@ public class Main {
         shows.put(sh7.getShowId(), sh7);
         shows.put(sh8.getShowId(), sh8);
         shows.put(sh9.getShowId(), sh9);
+        shows.put(sh10.getShowId(), sh10);
     }
 
     public static void main(String[] args) {
@@ -138,7 +147,9 @@ public class Main {
 
             if(id>0){
                 System.out.println("\nLogin successFul! Welcome "+userName);
-               
+                  
+                // -------------UserInput----------(singleThread)//
+
                 //  LocalDate date=null;
                 // boolean flag=false;
                 // do{
@@ -168,7 +179,7 @@ public class Main {
                 //  LocalTime showTime=null;
                 // movieId=theatreController.returnMovieId();
                  Thread t1=new Thread(()->{
-                  int status = showController.displaySeatsByShowTime( LocalTime.parse("14:45"), 1,theatreController.getTheatreId("KG"),LocalDate.now(),1);
+                  showController.displaySeatsByShowTime( LocalTime.parse("10:30"), 1,theatreController.getTheatreId("KG"),LocalDate.now(),1);
                     // showController.bookSeats(new String[]{"A1", "A3"}, show1, 1);
 
                     
@@ -176,8 +187,8 @@ public class Main {
         }, "User-1");
        
                  Thread t2=new Thread(()->{
-                  int status = showController.displaySeatsByShowTime(LocalTime.parse("14:45"), 1, theatreController.getTheatreId("KG"), LocalDate.now(),2);
-                    // showController.bookSeats(new String[]{"A1", "A5"}, show2, 2);
+                  showController.displaySeatsByShowTime(LocalTime.parse("10:30"), 1, theatreController.getTheatreId("KG"), LocalDate.now(),2);
+                    
 
                   
                     
@@ -185,20 +196,30 @@ public class Main {
         }, "User-2");
 
                  Thread t3=new Thread(()->{
-                  int status = showController.displaySeatsByShowTime(LocalTime.parse("20:15"), 3, theatreController.getTheatreId("PVR"), LocalDate.now().plusDays(1),3);
-                    // showController.bookSeats(new String[]{"A3", "A4"}, show3, 3);
-                    
+                  showController.displaySeatsByShowTime(LocalTime.parse("10:30"), 1, theatreController.getTheatreId("KG"), LocalDate.now(),3);
+                 
+                  
                     
         }, "User-3");
+
+                 Thread t4=new Thread(()->{
+                  showController.displaySeatsByShowTime(LocalTime.parse("20:15"), 3, theatreController.getTheatreId("PVR"), LocalDate.now().plusDays(1),3);
+                    
+                    
+                    
+        }, "User-4");
 
         t1.start();
         t2.start();
         t3.start();
+        t4.start();
                 
+        // -------------UserInput----------(singleThread)//
+
         //    showTime=showController.getShowTime();
         //         movieId=theatreController.returnMovieId();
         //     //    System.out.println("Movie Id: "+movieId+" TheatreId: "+theatreController.getTheatreId(theatreName)+" "+showTime+" "+date);
-        //       Show currentShow= showController.displaySeatsByShowTime(showTime, movieId,theatreController.getTheatreId(theatreName),date,id);
+        //       showController.displaySeatsByShowTime(showTime, movieId,theatreController.getTheatreId(theatreName),date,id);
                 // /*System.out.println("Enter seats (space or comma separated): ");
                 // String seatInput = sc.nextLine();
                 
@@ -222,6 +243,12 @@ public class Main {
                     
                     e.printStackTrace();
                 }
+                try {
+                    t4.join();
+                } catch (InterruptedException e) {
+                    
+                    e.printStackTrace();
+                }
                 for(Booking b:Booking.bookings.values()){
                     
                      int bookingId=b.getBookingId();
@@ -229,7 +256,7 @@ public class Main {
                      Show s=b.getShow();
                      Movie m=Main.movies.get(s.getMovieId());
                      Theatre t=Main.theatres.get(s.getTheatreId());
-                     System.out.println("UserName: "+u.getUserName()+" BookingId: "+bookingId+" MovieName: "+m.getmovieName()+" TheatreName: "+t.getTheatreName()+" ShowTime: "+s.getShowTime()+" ShowDate: "+s.getShowDate()+" BookedSeats: "+b.getSeatNo());
+                     System.out.println("UserName: "+u.getUserName()+" BookingId: "+bookingId+" MovieName: "+m.getmovieName()+" TheatreName: "+t.getTheatreName()+" ShowTime: "+s.getShowTime()+" ShowDate: "+s.getShowDate()+" BookedSeats: "+b.getSeatNo()+" TotalAmount: "+b.getTotalAmount());
                      
                 }
                 sc.close();
